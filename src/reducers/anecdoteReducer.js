@@ -30,8 +30,7 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-export const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
+export const anecdoteReducer = (state = initialState, action) => {
   if(action.type === 'VOTE'){
     const newArray = state.map(n => n.id !== action.payload.id ? n : {...n, votes:n.votes + 1})
     return newArray
@@ -43,4 +42,4 @@ export const reducer = (state = initialState, action) => {
   return state
 }
 
-export default {voteDispatcher, createAnecdoteDispatcher, reducer}
+export default {voteDispatcher, createAnecdoteDispatcher, anecdoteReducer}
