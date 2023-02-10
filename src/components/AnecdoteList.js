@@ -1,5 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { voteDispatcher } from '../reducers/anecdoteReducer'
+import { voteAnecdote } from '../reducers/anecdoteReducer'
+import { setNotification } from '../reducers/notificationsReducer'
+import { removeNotification } from '../reducers/notificationsReducer'
 
 const AnecdoteList = () => {
 
@@ -8,7 +10,11 @@ const AnecdoteList = () => {
       <div>
         <p>{anecdote.content}</p>
         <p>has {anecdote.votes}
-        <button onClick={() => vote(anecdote.id)}>vote</button>
+        <button onClick={() => {
+          vote(anecdote.id)
+          createNotification(anecdote.content)
+          removeNotificationFunc(anecdote.id)
+          }}>vote</button>
         </p>
         
       </div>
@@ -18,8 +24,8 @@ const AnecdoteList = () => {
   const dispatch = useDispatch()
   const anecdotes = useSelector(state => state.anecdotes)
   const filter = useSelector(state => state.filter)
-  console.log('filter', filter)
-  const sortedAnecdotes = anecdotes.sort((a,b) => b.votes - a.votes)
+  const arrayToSort = [...anecdotes]
+  const sortedAnecdotes = arrayToSort.sort((a,b) => b.votes - a.votes)
   
   const filteredAnecdotes = []
 
@@ -30,10 +36,25 @@ const AnecdoteList = () => {
   });
 
   const vote = (id) => {
-    dispatch(voteDispatcher(id))
+    dispatch(voteAnecdote(id))
   }
 
-  console.log(filteredAnecdotes)
+  const createNotification = (content) => {
+    const newContent = `You voted  '${content}'`
+    dispatch(setNotification(newContent))
+  }
+  
+  const removeNotificationFunc = (id) => {
+    function timeout(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    async function sleep() {
+      await timeout(3000);
+      dispatch(removeNotification(id))
+    }
+
+    sleep()
+  }
 
   return(
     <div>
